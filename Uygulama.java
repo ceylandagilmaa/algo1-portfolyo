@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 /*
- * Ders Programi Cakismasi · Portfolyo (KT1 Surumu)
+ * Ders Programi Cakismasi · Portfolyo (KT2 Surumu)
  * Ders: YMT1101 Algoritma ve Programlama I
- * 
+ *
  * Konu: K09 Ders Programi Cakismasi (Ders saatleri, cakisma bulma, bos saat onerisi)
  * Ayirt edici kural: Kural 9 (Uc ihlal kurali: 3 hatali davranista gecici engelleme)
  * Ana sinif her zaman Uygulama, menude 0 her zaman cikis.
@@ -27,6 +27,7 @@ public class Uygulama {
 
         int secim;
 
+        // KT2: Gozcu degerle biten ana menu dongusu (0 ile cikis)
         do {
             System.out.println();
             System.out.println("=== K09: Ders Programi ve Cakisma Sistemi ===");
@@ -46,18 +47,48 @@ public class Uygulama {
 
                 case 2:
                     System.out.println("\n--- YENI DERS EKLEME VE CAKISMA KONTROLU ---");
-                    System.out.printf("Ders baslangic saati (%d - %d arasi): ", GUN_BASLANGIC, GUN_BITIS - 1);
-                    int yeniBaslangic = input.nextInt();
+                    
+                    int yeniBaslangic = 0;
+                    int yeniBitis = 0;
+                    boolean gecerliGirdi = false;
 
-                    System.out.printf("Ders bitis saati (%d - %d arasi): ", GUN_BASLANGIC + 1, GUN_BITIS);
-                    int yeniBitis = input.nextInt();
+                    // KT2: Yanlis girdiyi dogru girdiye kadar soran Girdi Dogrulama Dongusu
+                    while (!gecerliGirdi) {
+                        System.out.printf("Ders baslangic saati (%d - %d arasi): ", GUN_BASLANGIC, GUN_BITIS - 1);
+                        yeniBaslangic = input.nextInt();
 
-                    // Girdi Dogrulama: Gecersiz saat kontrolu
-                    if (yeniBaslangic >= yeniBitis || yeniBaslangic < GUN_BASLANGIC || yeniBitis > GUN_BITIS) {
-                        ihlalSayaci++;
-                        System.out.printf("[HATA] Gecersiz saat araligi girdiniz! (Ihlal %d/%d)%n", ihlalSayaci, MAX_IHLAL);
-                    } else {
-                        // Cakisma Kontrol Algoritmasi: (Baslangic1 < Bitis2) && (Baslangic2 < Bitis1)
+                        System.out.printf("Ders bitis saati (%d - %d arasi): ", GUN_BASLANGIC + 1, GUN_BITIS);
+                        yeniBitis = input.nextInt();
+
+                        // Dogrulama Kontrolu
+                        if (yeniBaslangic >= yeniBitis || yeniBaslangic < GUN_BASLANGIC || yeniBitis > GUN_BITIS) {
+                            ihlalSayaci++;
+                            System.out.printf("[HATA] Gecersiz saat araligi! (Ihlal %d/%d)%n", ihlalSayaci, MAX_IHLAL);
+
+                            // KURAL 9: 3 ihlal olunca gecici engelleme
+                            if (ihlalSayaci >= MAX_IHLAL) {
+                                System.out.println("\n**************************************************************");
+                                System.out.println("[KURAL 9 DEVREYE GIRDI - KULLANICI GECICI OLARAK ENGELLENDI]");
+                                System.out.println("Neden: 3 kez ust uste hatali giris yapildi.");
+                                System.out.println("Sistem 5 saniye kilitleniyor, lutfen bekleyiniz...");
+                                System.out.println("**************************************************************");
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    System.out.println("Bekleme kesintiye ugradi.");
+                                }
+                                ihlalSayaci = 0; // Engelleme bitti, sifirla
+                                System.out.println("[BILGI] Engelleme kaldirildi. Menuye donuluyor.\n");
+                                break; // 3 ihlalde kilitlendi ve bu ders ekleme denemesini bitirdi
+                            }
+                            System.out.println("Lutfen saatleri kurala uygun sekilde TEKRAR giriniz!\n");
+                        } else {
+                            gecerliGirdi = true; // Girdi dogru, donguden cikabilir
+                        }
+                    }
+
+                    // Eger 3 ihlalle kilitlenmeden basariyla dogru saatler girildiyse cakismaya bak
+                    if (gecerliGirdi) {
                         boolean cakismaVar = (yeniBaslangic < mevcutBitis) && (mevcutBaslangic < yeniBitis);
 
                         if (cakismaVar) {
@@ -65,26 +96,20 @@ public class Uygulama {
                             System.out.println("\n[CAKISMA TESPIT EDILDI!]");
                             System.out.printf("Girdiginiz saat (%02d:00 - %02d:00), '%s' (%02d:00 - %02d:00) ile cakismaktadir!%n",
                                     yeniBaslangic, yeniBitis, mevcutDersAdi, mevcutBaslangic, mevcutBitis);
-                            System.out.printf("[KURAL DIŞI TALEP] Cakisan saate ders eklenemez. (Ihlal %d/%d)%n", ihlalSayaci, MAX_IHLAL);
+                            System.out.printf("[KURAL DISI TALEP] Cakisan saate ders eklenemez. (Ihlal %d/%d)%n", ihlalSayaci, MAX_IHLAL);
+
+                            if (ihlalSayaci >= MAX_IHLAL) {
+                                System.out.println("[KURAL 9] 3 ihlal hakkiniz doldu, gecici engellendiniz.");
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    System.out.println("Bekleme kesintiye ugradi.");
+                                }
+                                ihlalSayaci = 0;
+                            }
                         } else {
                             System.out.println("[BASARILI] Saat araliginda cakisma yok, ders programa uygun.");
                         }
-                    }
-
-                    // KURAL 9 KONTROLU: 3 ihlal tekrarlaninca gecici engelleme
-                    if (ihlalSayaci >= MAX_IHLAL) {
-                        System.out.println("\n**************************************************************");
-                        System.out.println("[KURAL 9 DEVREYE GIRDI - KULLANICI GECICI OLARAK ENGELLENDI]");
-                        System.out.println("Neden: 3 kez ust uste hatali giris veya cakisan saat talebinde bulunuldu.");
-                        System.out.println("Sistem 5 saniye kilitleniyor, lutfen bekleyiniz...");
-                        System.out.println("**************************************************************");
-                        try {
-                            Thread.sleep(5000); // 5 saniye bekletme / engelleme
-                        } catch (InterruptedException e) {
-                            System.out.println("Bekleme kesintiye ugradi.");
-                        }
-                        ihlalSayaci = 0; // Ceza sonrasi sayaci sifirla
-                        System.out.println("[BILGI] Engelleme kaldirildi. Lutfen kurallara uygun islem yapiniz.\n");
                     }
                     break;
 
@@ -107,11 +132,16 @@ public class Uygulama {
                     ihlalSayaci++;
                     System.out.printf("[HATA] Gecersiz secim yaptiniz! (Ihlal %d/%d)%n", ihlalSayaci, MAX_IHLAL);
                     if (ihlalSayaci >= MAX_IHLAL) {
-                        System.out.println("[KURAL 9] 3 hatali islem nedeniyle gecici engellendiniz. Neden: Menude olmayan secenekler girildi.");
+                        System.out.println("[KURAL 9] 3 hatali secim nedeniyle gecici engellendiniz.");
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            System.out.println("Bekleme kesintiye ugradi.");
+                        }
                         ihlalSayaci = 0;
                     }
             }
-        } while (secim != 0); // 0 gozcu degeri: 0 girilene kadar menuden cikmaz
+        } while (secim != 0);
 
         input.close();
     }

@@ -15,7 +15,7 @@ Bu depo K09 numaralı ders programı çakışması ve Kural 9 ayırt edici kural
 | KT | Son teslim | Bu sürümde ne var | Durum |
 |---|---|---|---|
 | KT1 | 6 Kasım 2026 Cuma 23.59 | Scanner ile girdi, en az bir if/else, ayırt edici kuralın (Kural 9) en basit hali, 0 ile çıkış | Hazır; do-while menü ve çakışma kontrolü eklendi |
-| KT2 | 27 Kasım 2026 Cuma 23.59 | Gözcü değerle biten menü döngüsü, girdi doğrulama döngüsü | Planlandı |
+| KT2 | 27 Kasım 2026 Cuma 23.59 | Gözcü değerle biten menü döngüsü, girdi doğrulama döngüsü |Hazır; do-while menü ve while doğrulama döngüsü eklendi
 | KT3 | 11 Aralık 2026 Cuma 23.59 | Metotlar, dizi alıp tek değer döndüren metot, girdi doğrulayan metot; veriler dizide | Planlandı |
 | KT4 | 25 Aralık 2026 Cuma 23.59 | Çalışan son sürüm, README tam, AI-BEYANI.md dolu, üç dil karşılaştırması | Planlandı |
 
